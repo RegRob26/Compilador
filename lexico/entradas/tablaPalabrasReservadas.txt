@@ -1,0 +1,17 @@
+if, 100
+else, 101
+for, 102
+do, 103
+while, 104
+switch, 105
+case, 106
+break, 107
+continue, 108
+typedef, 109
+struct, 110
+const, 111
+return, 112
+int, 200
+float, 201
+char, 202
+double, 203
