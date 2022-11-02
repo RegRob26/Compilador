@@ -44,7 +44,7 @@ def leerLinea(linea, archivo):
     linea = linea + 1
     return archivo.readline()
 
-def tablaTransiciones(linea, lexema, tt):
+def tablaTransiciones(linea, lexema, tt, cant):
     estadoActual = 1
     simbolo = 0
     entrada = 0
@@ -105,10 +105,11 @@ def tablaTransiciones(linea, lexema, tt):
 
             if entrada == 11 and tt[estadoActual][len(tt[estadoActual])-2] == 2630:
                 lexemas.append(lexema)
-                lexemas.append(tt[estadoActual][len(tt[estadoActual])])
-                lexemas.append(linea)
+                lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
+                lexemas.append(cant)
                 lexemasValues.append(lexemas)
-                lexemas.clear()
+                lexemas = []
+                #lexemas.clear()
                 lexema = ""
                 estadoAnterior = estadoActual
                 estadoActual = 1
@@ -119,14 +120,15 @@ def tablaTransiciones(linea, lexema, tt):
                 estadoActual = tt[estadoActual][entrada]
 
     print(lexemas)
-    return 1
+    return lexemasValues
 
 def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaErrores):
     cant = 0
     lexema = ""
     linea = leerArchivo(fichero, cant)
+    token = 0
     while linea != '':
-        token = tablaTransiciones(linea, lexema, transiciones)
+        token = tablaTransiciones(linea, lexema, transiciones, cant)
         if token == -1:
             print("ERROR en linea =", cant)
             saveError = str("ERROR en linea: " + str(cant) + '\n')
@@ -142,7 +144,7 @@ def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaEr
         if token != -1:
             linea = leerArchivo(fichero, cant)
             tablaSimbolos.write(str(str(token) + '\n'))
-
+    print(token)
 
 if __name__ == '__main__':
     archivo = "../entradas/tablaPalabrasReservadas.txt"
