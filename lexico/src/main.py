@@ -44,81 +44,100 @@ def leerLinea(linea, archivo):
     linea = linea + 1
     return archivo.readline()
 
+def casosComprobar(simbolo):
+    entrada = 0
+    notConjunto = "[^*^a-zA-z^\s^/^\d^=^<^>^_^+^-^(^)^{^}^;^\"^,^.^E]"
+
+    if simbolo == '/':
+        entrada = 0
+    elif simbolo == '*':
+        entrada = 1
+    elif re.findall(notConjunto, simbolo):
+        entrada = 2
+    elif re.findall(notConjunto, simbolo):
+        entrada = 3
+    elif re.findall(notConjunto, simbolo):
+        entrada = 4
+    elif simbolo == '/n':
+        entrada = 5
+    elif simbolo == '"':
+        entrada = 6
+    elif simbolo == 'CR':
+        entrada = 7
+    elif re.findall("[a-zA-z]", simbolo):
+        entrada = 8
+    elif simbolo == '_':
+        entrada = 9
+    elif re.findall("[0-9]", simbolo):
+        entrada = 10
+    elif simbolo == '\t' or simbolo == '\n' or simbolo == ' ':
+        entrada = 11
+    elif simbolo == '+':
+        entrada = 12
+    elif simbolo == '-':
+        entrada = 13
+    elif simbolo == '(':
+        entrada = 14
+    elif simbolo == ')':
+        entrada = 15
+    elif simbolo == '{':
+        entrada = 16
+    elif simbolo == '}':
+        entrada = 17
+    elif simbolo == ';':
+        entrada = 18
+    elif simbolo == '<':
+        entrada = 19
+    elif simbolo == '>':
+        entrada = 20
+    elif simbolo == '=':
+        entrada = 21
+    elif simbolo == ',':
+        entrada = 22
+    elif simbolo == '.':
+        entrada = 23
+    elif simbolo == 'E':
+        entrada = 24
+
+    return entrada
+
 def tablaTransiciones(linea, lexema, tt, cant):
     estadoActual = 1
     simbolo = 0
     entrada = 0
     lexemas = []
     estadoAnterior = 0
-    notConjunto = "[^*^a-zA-z^\s^/^\d^=^<^>^_^+^-^(^)^{^}^;^\"]"
+
     lexemasValues = []
+    entradaAnterior = 0
 
     for simbolo in linea:
+        vistazo = linea[1:2]
         if estadoActual != 2630:
-            if simbolo == '/':
-                entrada = 0
-            elif simbolo == '*':
-                entrada = 1
-            elif re.findall(notConjunto, simbolo):
-                entrada = 2
-            elif re.findall(notConjunto, simbolo):
-                entrada = 3
-            elif re.findall(notConjunto, simbolo):
-                entrada = 4
-            elif simbolo == '/n':
-                entrada = 5
-            elif simbolo == '"':
-                entrada = 6
-            elif simbolo == 'CR':
-                entrada = 7
-            elif re.findall("[a-zA-z]", simbolo):
-                entrada = 8
-            elif simbolo == '_':
-                entrada = 9
-            elif re.findall("[0-9]", simbolo):
-                entrada = 10
-            elif simbolo == '\t' or simbolo == '\n' or simbolo == ' ':
-                entrada = 11
-            elif simbolo == '+':
-                entrada = 12
-            elif simbolo == '-':
-                entrada = 13
-            elif simbolo == '(':
-                entrada = 14
-            elif simbolo == ')':
-                entrada = 15
-            elif simbolo == '{':
-                entrada = 16
-            elif simbolo == '}':
-                entrada = 17
-            elif simbolo == ';':
-                entrada = 18
-            elif simbolo == '<':
-                entrada = 19
-            elif simbolo == '>':
-                entrada = 20
-            elif simbolo == '=':
-                entrada = 21
-
+            entrada = casosComprobar(simbolo)
             if estadoActual == 2629:
                 return -1
-
-            if entrada == 11 and tt[estadoActual][len(tt[estadoActual])-2] == 2630:
+            elif tt[estadoActual][entrada] != -1:
+                lexema = lexema + simbolo
+                estadoAnterior = estadoActual
+                estadoActual = tt[estadoActual][entrada]
+                linea = linea[1:]
+            if tt[estadoActual][len(tt[estadoActual])-2] == 2630 and tt[estadoActual][casosComprobar(vistazo)] == -1:
                 lexemas.append(lexema)
                 lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
                 lexemas.append(cant)
                 lexemasValues.append(lexemas)
                 lexemas = []
-                #lexemas.clear()
                 lexema = ""
                 estadoAnterior = estadoActual
                 estadoActual = 1
                 entrada = 0
-            else:
-                lexema = lexema + simbolo
-                estadoAnterior = estadoActual
-                estadoActual = tt[estadoActual][entrada]
 
+
+
+            entradaAnterior = entrada
+
+            print(linea)
     print(lexemas)
     return lexemasValues
 
@@ -143,7 +162,8 @@ def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaEr
         print(cant)
         if token != -1:
             linea = leerArchivo(fichero, cant)
-            tablaSimbolos.write(str(str(token) + '\n'))
+            if len(token) >= 1:
+                tablaSimbolos.write(str(str(token) + '\n'))
     print(token)
 
 if __name__ == '__main__':

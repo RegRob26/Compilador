@@ -1,5 +1,4 @@
-int main
-
+int main,0;
 int first_number = 0, second_number = 1, third_number, i, number;
 printf "Enter the number for fibonacci series:";
 printf "Fibonacci Series for a given number:";
