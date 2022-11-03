@@ -1,11 +1,10 @@
--
+    int
 int menu_principal();
 int menu_editar();
 int menu_reproducir();
 int case_principal(int, Dlinked_list *dlinked_list, int, int, int);
 int case_reproducir(int, Dlinked_list *dlinked_list, int *contador);
 int case_editar(int, int, Dlinked_list *dlinked_list, int *, int *);
-
 int main(){
     Dlinked_list *dlinked_list = create_dlinked_list();
     int opcion;
