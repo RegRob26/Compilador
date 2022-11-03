@@ -33,7 +33,12 @@ def busquedaPaReser(palabra, tablaPalabrasReservadas):
     :param tablaPalabrasReservadas: Es el diccionario de las palabras reservadas en el que se buscara la palabra.
     :return: el valor de la palabra(token) como entero o None en caso de estar dentro del diccionario.
     """
-    return tablaPalabrasReservadas[palabra]
+    token = None
+    try:
+        token = tablaPalabrasReservadas[palabra]
+    except:
+        pass
+    return token
 
 def leerArchivo(fichero, lineas):
     linea = fichero.readline()
@@ -46,7 +51,7 @@ def leerLinea(linea, archivo):
 
 def casosComprobar(simbolo):
     entrada = 0
-    notConjunto = "[^*^a-zA-z^\s^/^\d^=^<^>^_^+^-^(^)^{^}^;^\"^,^.^E]"
+    notConjunto = "[^*^a-zA-z^\s^/^\d^=^<^>^_^+^-^(^)^{^}^;^\"^,^.^E^-]"
 
     if simbolo == '/':
         entrada = 0
@@ -98,10 +103,12 @@ def casosComprobar(simbolo):
         entrada = 23
     elif simbolo == 'E':
         entrada = 24
+    elif simbolo == '-':
+        entrada = 25
 
     return entrada
 
-def tablaTransiciones(linea, lexema, tt, cant):
+def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
     estadoActual = 1
     simbolo = 0
     entrada = 0
@@ -115,7 +122,8 @@ def tablaTransiciones(linea, lexema, tt, cant):
         vistazo = linea[1:2]
         if estadoActual != 2630:
             entrada = casosComprobar(simbolo)
-            if estadoActual == 2629:
+            if tt[estadoActual][entrada] == -1:
+                error.append("Error caracter no identificado en linea " + str(cant) + ' ' + simbolo)
                 return -1
             if (estadoActual == 1 or estadoActual == 11) and entrada == 11:
                 pass
@@ -126,7 +134,15 @@ def tablaTransiciones(linea, lexema, tt, cant):
 
             if tt[estadoActual][len(tt[estadoActual])-2] == 2630 and tt[estadoActual][casosComprobar(vistazo)] == -1:
                 lexemas.append(lexema)
-                lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
+                corroboraClave = tt[estadoActual][len(tt[estadoActual])-1]
+                if corroboraClave == 301:
+                    newToken = busquedaPaReser(lexema, palabrasReservadas)
+                    if newToken is not None:
+                        lexemas.append(newToken)
+                    else:
+                        lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
+                else:
+                    lexemas.append(tt[estadoActual][len(tt[estadoActual]) - 1])
                 lexemas.append(cant)
                 lexemasValues.append(lexemas)
                 lexemas = []
@@ -138,34 +154,32 @@ def tablaTransiciones(linea, lexema, tt, cant):
             linea = linea[1:]
             entradaAnterior = entrada
 
-            print(linea)
-    print(lexemas)
     return lexemasValues
 
 def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaErrores):
-    cant = 0
+    cant = 1
     lexema = ""
     linea = leerArchivo(fichero, cant)
     token = 0
     while linea != '':
-        token = tablaTransiciones(linea, lexema, transiciones, cant)
+        error = []
+        token = tablaTransiciones(linea, lexema, transiciones, palabrasReservadas, cant, error)
         if token == -1:
-            print("ERROR en linea =", cant)
-            saveError = str("ERROR en linea: " + str(cant) + '\n')
             linea = leerArchivo(fichero, cant)
-            tablaErrores.write(saveError)
-        elif token == 301:
-            newToken = busquedaPaReser(lexema, palabrasReservadas)
-            if newToken is not None:
-                token = newToken
+            for dato in error:
+                print(dato)
+                tablaErrores.write(dato)
+                tablaErrores.write('\n')
         cant = cant + 1
-        print("Imprimiendo token", token)
-        print(cant)
         if token != -1:
             linea = leerArchivo(fichero, cant)
             if len(token) >= 1:
-                tablaSimbolos.write(str(str(token) + '\n'))
-    print(token)
+                #tablaSimbolos.write("\n".join(token))
+                for dato in token:
+                    for entrada in dato:
+                        tablaSimbolos.write(str(str(entrada)))
+                        tablaSimbolos.write('\t')
+                    tablaSimbolos.write('\n')
 
 if __name__ == '__main__':
     archivo = "../entradas/tablaPalabrasReservadas.txt"
@@ -183,7 +197,6 @@ if __name__ == '__main__':
     tablaErrores = open(archivoErrores, 'w')
 
     tablaTransicion = creaTablaTransiciones(archivoNombreTransi)
-    print(tablaTransicion)
 
     linea = 0
 
