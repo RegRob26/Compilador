@@ -1,5 +1,7 @@
 import sys
 import re
+
+
 def creaTablaReserv(archivo):
     """
     Crea un diccionario apartir de los elementos del archivo dado que contiene las palabras reservadas con su respectivo
@@ -12,11 +14,10 @@ def creaTablaReserv(archivo):
         for line in f:
             (k, v) = line.split(',')
             diccionario[str(k)] = int(v)
-
     return diccionario
 
-def creaTablaTransiciones(archivo):
 
+def creaTablaTransiciones(archivo):
     transiciones = []
     with open(archivo) as f:
         for line in f:
@@ -26,6 +27,7 @@ def creaTablaTransiciones(archivo):
             transiciones.append(temp2)
 
     return transiciones
+
 
 def busquedaPaReser(palabra, tablaPalabrasReservadas):
     """
@@ -42,14 +44,17 @@ def busquedaPaReser(palabra, tablaPalabrasReservadas):
         pass
     return token
 
+
 def leerArchivo(fichero, lineas):
     linea = fichero.readline()
     lineas = lineas + 1
     return linea
 
+
 def leerLinea(linea, archivo):
     linea = linea + 1
     return archivo.readline()
+
 
 def casosComprobar(simbolo):
     entrada = 0
@@ -110,7 +115,8 @@ def casosComprobar(simbolo):
 
     return entrada
 
-def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
+
+def tablaTransiciones(linea, lexema, tt, palabrasReservadas, cant, error):
     """
     Esta funcion contiene en si las comprobaciones de los estados con sus entradas mediante diversos condiconales, pero
     funciona con una cadena dada por una funcion superior, es decir solo recibe una linea del programa fuente y va determinando
@@ -134,7 +140,7 @@ def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
     entradaAnterior = 0
 
     for simbolo in linea:
-        #El 'vistazo' sera nuestra forma de saber si seguir leyendo la cadena o se puede ya almacenar el lexema con su
+        # El 'vistazo' sera nuestra forma de saber si seguir leyendo la cadena o se puede ya almacenar el lexema con su
         # valores encontrados. Por lo que es el caracter de comprobacion.
         vistazo = linea[1:2]
         if estadoActual != 2630:
@@ -145,7 +151,8 @@ def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
                 return -1
 
             # Nos permite realizar la omision para delimitadores y comentarios con pass para dicha accion
-            if ((estadoActual == 1 or estadoActual == 11) and entrada == 11) or tt[estadoActual][len(tt[estadoActual])-1] == 1:
+            if ((estadoActual == 1 or estadoActual == 11) and entrada == 11) or tt[estadoActual][
+                len(tt[estadoActual]) - 1] == 1:
                 pass
             # si nuestro estado actual tiene transicion con la entrada dada, es decir, es diferente de -1 entonces almacenara
             # el lexema con lo previamente guardado en pasos anteriores y cambiaara de estado
@@ -155,9 +162,9 @@ def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
                 estadoActual = tt[estadoActual][entrada]
             # Si nuestro estado es de aceptacion y el 'vistazo' ya no corresponde al lenguaje del automata en ejecucion,
             # entonces almacenara el lexema junto con su token y la linea en la que aparece
-            if tt[estadoActual][len(tt[estadoActual])-2] == 2630 and tt[estadoActual][casosComprobar(vistazo)] == -1:
+            if tt[estadoActual][len(tt[estadoActual]) - 2] == 2630 and tt[estadoActual][casosComprobar(vistazo)] == -1:
                 lexemas.append(lexema)
-                corroboraClave = tt[estadoActual][len(tt[estadoActual])-1]
+                corroboraClave = tt[estadoActual][len(tt[estadoActual]) - 1]
                 if corroboraClave == 1:
                     pass
                 else:
@@ -168,7 +175,7 @@ def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
                         if newToken is not None:
                             lexemas.append(newToken)
                         else:
-                            lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
+                            lexemas.append(tt[estadoActual][len(tt[estadoActual]) - 1])
                     else:
                         lexemas.append(tt[estadoActual][len(tt[estadoActual]) - 1])
                     lexemas.append(cant)
@@ -179,11 +186,12 @@ def tablaTransiciones(linea, lexema, tt, palabrasReservadas,  cant, error):
                     estadoActual = 1
                     entrada = 0
 
-            #Eliminamos el caracter del buffer de entrada para mejor manejo
+            # Eliminamos el caracter del buffer de entrada para mejor manejo
             linea = linea[1:]
             entradaAnterior = entrada
-    #Se retorna la lista de valores con los tokens encontrados
+    # Se retorna la lista de valores con los tokens encontrados
     return lexemasValues
+
 
 def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaErrores):
     """
@@ -224,10 +232,11 @@ def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaEr
                         tablaSimbolos.write('\t')
                     tablaSimbolos.write('\n')
 
+
 if __name__ == '__main__':
     archivo = "../entradas/tablaPalabrasReservadas.txt"
 
-    #archivoNombre = sys.argv[1]            #Para la lectura por consola del archivo
+    # archivoNombre = sys.argv[1]            #Para la lectura por consola del archivo
     archivoNombre = "../entradas/prueba.c"
     tablaPalabrasReservadas = creaTablaReserv(archivo)
     archivoAnalizar = open(archivoNombre, 'r')
@@ -241,9 +250,6 @@ if __name__ == '__main__':
 
     tablaTransicion = creaTablaTransiciones(archivoNombreTransi)
 
+
+    print(tablaPalabrasReservadas)
     analizador(tablaTransicion, tablaPalabrasReservadas, archivoAnalizar, tablaSimbolos, tablaErrores)
-
-
-
-
-
