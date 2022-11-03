@@ -1,2 +1,2 @@
-Error caracter no identificado en linea 9 !
-Error caracter no identificado en linea 12 '
+Error caracter no identificado en linea 16 &
+Error caracter no identificado en linea 26 !

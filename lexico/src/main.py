@@ -236,16 +236,18 @@ def analizador(transiciones, palabrasReservadas, fichero, tablaSimbolos, tablaEr
 if __name__ == '__main__':
     archivo = "../entradas/tablaPalabrasReservadas.txt"
 
-    # archivoNombre = sys.argv[1]            #Para la lectura por consola del archivo
-    archivoNombre = "../entradas/prueba.c"
+    archivoNombre = sys.argv[1]            #Para la lectura por consola del archivo
+    #archivoNombre = "../entradas/prueba.c"
     tablaPalabrasReservadas = creaTablaReserv(archivo)
     archivoAnalizar = open(archivoNombre, 'r')
 
     archivoNombreTransi = "../entradas/tablaTransiciones.txt"
-    archivoEscribir = "../salidas/tablaSimbolos.txt"
+    archivoEscribir = sys.argv[2]
+   # archivoEscribir = "../salidas/tablaSimbolos.txt"
     tablaSimbolos = open(archivoEscribir, 'w')
 
-    archivoErrores = "../salidas/errores.txt"
+    archivoErrores = sys.argv[3]
+    #archivoErrores = "../salidas/errores.txt"
     tablaErrores = open(archivoErrores, 'w')
 
     tablaTransicion = creaTablaTransiciones(archivoNombreTransi)
