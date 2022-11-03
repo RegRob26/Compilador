@@ -117,11 +117,13 @@ def tablaTransiciones(linea, lexema, tt, cant):
             entrada = casosComprobar(simbolo)
             if estadoActual == 2629:
                 return -1
+            if (estadoActual == 1 or estadoActual == 11) and entrada == 11:
+                pass
             elif tt[estadoActual][entrada] != -1:
                 lexema = lexema + simbolo
                 estadoAnterior = estadoActual
                 estadoActual = tt[estadoActual][entrada]
-                linea = linea[1:]
+
             if tt[estadoActual][len(tt[estadoActual])-2] == 2630 and tt[estadoActual][casosComprobar(vistazo)] == -1:
                 lexemas.append(lexema)
                 lexemas.append(tt[estadoActual][len(tt[estadoActual])-1])
@@ -133,8 +135,7 @@ def tablaTransiciones(linea, lexema, tt, cant):
                 estadoActual = 1
                 entrada = 0
 
-
-
+            linea = linea[1:]
             entradaAnterior = entrada
 
             print(linea)
